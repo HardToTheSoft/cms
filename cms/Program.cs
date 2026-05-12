@@ -1,4 +1,9 @@
+using Cms.Services;
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

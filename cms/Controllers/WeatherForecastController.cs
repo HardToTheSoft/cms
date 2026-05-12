@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using Cms.Models;
+using Cms.Services;
 
 
 namespace Cms.Controllers;
@@ -11,19 +12,20 @@ namespace Cms.Controllers;
 public class WeatherForecastController : ControllerBase
 {
 	#region Members
-	private static readonly string[] Summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
+	private readonly IWeatherForecastService _weatherForecastService;
+	#endregion
+
+
+	#region Constructor
+	public WeatherForecastController(IWeatherForecastService weatherForecastService)
+	{
+		_weatherForecastService = weatherForecastService;
+	}
 	#endregion
 
 
 	#region Actions
 	[HttpGet]
-	public IEnumerable<WeatherForecast> Get() => Enumerable.Range(1, 5).Select(index =>
-		new WeatherForecast
-		(
-				DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-				Random.Shared.Next(-20, 55),
-				Summaries[Random.Shared.Next(Summaries.Length)]
-		))
-		.ToArray();
+	public IEnumerable<WeatherForecast> Get([FromQuery] int days = 5) => _weatherForecastService.GetForecasts(days);
 	#endregion
 }
