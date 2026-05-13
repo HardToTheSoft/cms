@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 using Cms.Models;
-using Cms.Services;
+using Cms.Infrastructure.Services;
 
 
 namespace Cms.Controllers;
 
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class WeatherForecastController : ControllerBase

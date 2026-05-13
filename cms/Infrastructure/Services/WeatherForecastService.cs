@@ -1,7 +1,7 @@
 using Cms.Models;
 
 
-namespace Cms.Services;
+namespace Cms.Infrastructure.Services;
 
 
 public class WeatherForecastService : IWeatherForecastService
