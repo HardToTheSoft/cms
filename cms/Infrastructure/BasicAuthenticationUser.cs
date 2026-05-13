@@ -5,8 +5,19 @@ using System.ComponentModel.DataAnnotations;
 namespace Cms.Infrastructure;
 
 
-public sealed class User
+public sealed class BasicAuthenticationUser
 {
+  #region Members
+  private const string ROLE_USER_PREFIX = "user_";
+  private const string ROLE_ADMIN_PREFIX = "admin_";
+  private const string ROLE_CMS_PREFIX = "cms_";
+
+  public const string ROLE_USER = "user";
+  public const string ROLE_ADMIN = "admin";
+  public const string ROLE_CMS = "cms";
+  #endregion
+
+
   #region Properties
   [Display(Name = "User Name")]
   [Required(ErrorMessage = "{0} is required.")]
@@ -46,9 +57,9 @@ public sealed class User
   {
     Roles = UserName! switch
     {
-      var s when s.StartsWith("admin_", StringComparison.OrdinalIgnoreCase) => ["Admin", "User"],
-      var s when s.StartsWith("user_", StringComparison.OrdinalIgnoreCase) => ["User"],
-      var s when s.StartsWith("cms_", StringComparison.OrdinalIgnoreCase) => ["CMS"],
+      var s when s.StartsWith(ROLE_USER_PREFIX, StringComparison.OrdinalIgnoreCase) => [ROLE_USER],
+      var s when s.StartsWith(ROLE_ADMIN_PREFIX, StringComparison.OrdinalIgnoreCase) => [ROLE_ADMIN, ROLE_USER],
+      var s when s.StartsWith(ROLE_CMS_PREFIX, StringComparison.OrdinalIgnoreCase) => [ROLE_CMS],
       _ => []
     };
   }

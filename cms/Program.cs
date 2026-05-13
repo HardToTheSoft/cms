@@ -1,4 +1,5 @@
 using Microsoft.OpenApi;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Microsoft.AspNetCore.Authentication;
 
@@ -6,50 +7,56 @@ using Cms.Infrastructure;
 using Cms.Infrastructure.Services;
 
 
-var builder = WebApplication.CreateBuilder(args);
+var webApplicationBuilder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
+webApplicationBuilder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 
-builder.Services.AddControllers();
+webApplicationBuilder.Services.AddControllers(options =>
+  {
+    options.Filters.Add(new ProducesAttribute("application/json"));
+    options.Filters.Add(new ConsumesAttribute("application/json"));
+  });
 
-builder.Services.AddAuthentication(BasicAuthenticationHandler.SchemeName)
-  .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicAuthenticationHandler.SchemeName, null);
+webApplicationBuilder.Services.AddAuthentication(BasicAuthenticationHandler.SCHEME_NAME)
+  .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(BasicAuthenticationHandler.SCHEME_NAME, null);
 
-builder.Services.AddAuthorization();
+webApplicationBuilder.Services.AddAuthorization();
 
-builder.Services.AddEndpointsApiExplorer();
+webApplicationBuilder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(options =>
+webApplicationBuilder.Services.AddSwaggerGen(options =>
 {
   var openApiSecurityScheme = new OpenApiSecurityScheme
   {
     Type = SecuritySchemeType.Http,
-    Scheme = BasicAuthenticationHandler.SchemeName,
+    Scheme = BasicAuthenticationHandler.SCHEME_NAME,
     In = ParameterLocation.Header,
     Name = HeaderNames.Authorization,
     Description = "Basic Authentication"
   };
 
-  options.AddSecurityDefinition(BasicAuthenticationHandler.SchemeName, openApiSecurityScheme);
+  options.AddSecurityDefinition(BasicAuthenticationHandler.SCHEME_NAME, openApiSecurityScheme);
 
   options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
   {
-    [new OpenApiSecuritySchemeReference(BasicAuthenticationHandler.SchemeName, document)] = []
+    [new OpenApiSecuritySchemeReference(BasicAuthenticationHandler.SCHEME_NAME, document)] = []
   });
 });
 
-var app = builder.Build();
+var webApplication = webApplicationBuilder.Build();
 
-if (app.Environment.IsDevelopment())
+webApplication.UseMiddleware<GlobalExceptionMiddleware>();
+
+if (webApplication.Environment.IsDevelopment())
 {
-  app.UseSwagger();
-  app.UseSwaggerUI();
+  webApplication.UseSwagger();
+  webApplication.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
+webApplication.UseHttpsRedirection();
+webApplication.UseRouting();
+webApplication.UseAuthentication();
+webApplication.UseAuthorization();
+webApplication.MapControllers();
 
-app.Run();
+webApplication.Run();

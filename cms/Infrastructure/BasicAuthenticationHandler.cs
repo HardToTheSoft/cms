@@ -13,7 +13,7 @@ namespace Cms.Infrastructure;
 public sealed class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
   #region Members
-  public const string SchemeName = "Basic";
+  public const string SCHEME_NAME = "Basic";
   #endregion
 
 
@@ -50,24 +50,24 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
       if (parameters.Length != 2)
         return AuthenticateResult.Fail("Invalid Authorization Header");
 
-      var user = new User
+      var basicAuthenticationUser = new BasicAuthenticationUser
       {
         UserName = parameters[0],
         Password = parameters[1]
       };
 
-      if (!user.TryValidate(out var validationErrors))
+      if (!basicAuthenticationUser.TryValidate(out var validationErrors))
         return AuthenticateResult.Fail("User validation failed.");
 
       List<Claim> claims = [
-        new(ClaimTypes.NameIdentifier, user.UserName),
-        new(ClaimTypes.Name, user.UserName)
+        new(ClaimTypes.NameIdentifier, basicAuthenticationUser.UserName),
+        new(ClaimTypes.Name, basicAuthenticationUser.UserName)
       ];
 
-      foreach (var role in user.Roles!)
+      foreach (var role in basicAuthenticationUser.Roles!)
         claims.Add(new(ClaimTypes.Role, role));
 
-      var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme.Name));
+      var principal = new CaseInsensitiveRoleClaimPrincipal(new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme.Name)));
 
       return AuthenticateResult.Success(new(principal, Scheme.Name));
     }
