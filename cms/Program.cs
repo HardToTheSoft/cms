@@ -1,4 +1,5 @@
 using Microsoft.OpenApi;
+using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
@@ -44,9 +45,11 @@ webApplicationBuilder.Services.AddSwaggerGen(options =>
 
 var connectionString = webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection");
 
-var dbBaseDirectory = Path.GetDirectoryName(connectionString.Replace("Data Source=", "", StringComparison.OrdinalIgnoreCase));
+var sqliteConnectionStringBuilder = new SqliteConnectionStringBuilder(connectionString);
 
-if (!Directory.Exists(dbBaseDirectory))
+var dbBaseDirectory = Path.GetDirectoryName(sqliteConnectionStringBuilder.DataSource);
+
+if (!string.IsNullOrEmpty(dbBaseDirectory) && !Directory.Exists(dbBaseDirectory))
   Directory.CreateDirectory(dbBaseDirectory);
 
 webApplicationBuilder.Services.AddDbContext<CmsDbContext>(options => options.UseSqlite(connectionString));
