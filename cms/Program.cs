@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication;
 
 using Cms.Data;
 using Cms.Services;
+using Cms.Extensions;
+using System.Reflection;
 using Cms.Infrastructure;
 
 
@@ -55,8 +57,16 @@ if (!string.IsNullOrEmpty(dbBaseDirectory) && !Directory.Exists(dbBaseDirectory)
 
 webApplicationBuilder.Services.AddDbContext<CmsDbContext>(options => options.UseSqlite(connectionString));
 
-webApplicationBuilder.Services.AddScoped<IEntityService, EntityService>();
+webApplicationBuilder.Services.AddHostedService<EventDispatcherBackgroundService>();
+
+webApplicationBuilder.Services.AddSingleton<IEventQueueService, EventQueueService>();
+
+webApplicationBuilder.Services.AddEventHandlers(Assembly.GetExecutingAssembly());
+
+webApplicationBuilder.Services.AddScoped<IEventDispatcherService, EventDispatcherService>();
 webApplicationBuilder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+webApplicationBuilder.Services.AddScoped<IEntityService, EntityService>();
+
 webApplicationBuilder.Services.AddTransient<ISearchService, SearchService>();
 
 var webApplication = webApplicationBuilder.Build();
@@ -67,6 +77,8 @@ if (webApplication.Environment.IsDevelopment())
 {
   webApplication.UseSwagger();
   webApplication.UseSwaggerUI();
+
+  webApplication.UseMiddleware<EnableRequestBodyBufferingMiddleware>();
 
   using var serviceScope = webApplication.Services.CreateScope();
 
