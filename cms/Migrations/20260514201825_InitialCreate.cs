@@ -16,10 +16,10 @@ namespace cms.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Published = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false),
-                    Deleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false),
+                    Version = table.Column<int>(type: "INTEGER", nullable: false),
+                    Published = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Disabled = table.Column<bool>(type: "INTEGER", nullable: false),
                     PayloadJson = table.Column<string>(type: "TEXT", nullable: true),
-                    Version = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
                     CreatedAt = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "(strftime('%s','now') * 1000)"),
                     UpdatedAt = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "(strftime('%s','now') * 1000)")
                 },

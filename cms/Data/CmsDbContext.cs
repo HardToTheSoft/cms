@@ -40,17 +40,14 @@ public sealed class CmsDbContext : DbContext
 
       entity.HasKey(e => e.Id);
 
-      entity.Property(e => e.Id)
-        .ValueGeneratedOnAdd();
+      // entity.Property(e => e.Version)
+      //   .HasDefaultValue(1);
 
-      entity.Property(e => e.Published)
-        .HasDefaultValue(false);
+      // entity.Property(e => e.Published)
+      //   .HasDefaultValue(false);
 
-      entity.Property(e => e.Deleted)
-        .HasDefaultValue(false);
-
-      entity.Property(e => e.Version)
-        .HasDefaultValue(1);
+      // entity.Property(e => e.Disabled)
+      //   .HasDefaultValue(false);
 
       entity.Property(e => e.CreatedAt)
         .HasDefaultValueSql(TIMESTAMP_DEFAULT_VALUE);

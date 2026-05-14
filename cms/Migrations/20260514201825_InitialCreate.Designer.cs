@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace cms.Migrations
 {
     [DbContext(typeof(CmsDbContext))]
-    [Migration("20260514075913_InitialCreate")]
+    [Migration("20260514201825_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -30,18 +30,14 @@ namespace cms.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValueSql("(strftime('%s','now') * 1000)");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(false);
+                    b.Property<bool>("Disabled")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PayloadJson")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Published")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(false);
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("UpdatedAt")
                         .ValueGeneratedOnAdd()
@@ -49,9 +45,7 @@ namespace cms.Migrations
                         .HasDefaultValueSql("(strftime('%s','now') * 1000)");
 
                     b.Property<int>("Version")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(1);
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

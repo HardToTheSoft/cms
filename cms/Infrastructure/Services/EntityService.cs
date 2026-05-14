@@ -27,11 +27,10 @@ public class EntityService : IEntityService
 	{
 		var entity = await _entities.FindAsync(id);
 
-		if (entity == null || !entity.Published)
+		if (entity == null || entity.Disabled)
 			return entity;
 
-		entity.Published = false;
-		entity.Version += 1;
+		entity.Disabled = true;
 		entity.UpdatedAt = DateTimeOffset.UtcNow;
 
 		await _entities.UpdateAsync(entity);

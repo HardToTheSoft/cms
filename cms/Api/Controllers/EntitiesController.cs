@@ -41,12 +41,10 @@ public class EntitiesController : ControllerBase
 		[FromQuery] int? page = 1,
 		[FromQuery] int? limit = 25)
 	{
-		var d = _search.GetAsQueryable<Entity>().ToArray();
-
 		var (entities, total) = await _search.QueryAsync<Entity>(query =>
 		{
 			if (!User.IsInRole(BasicAuthenticationUser.ROLE_ADMIN))
-				query = query.Where(e => e.Published == true);
+				query = query.Where(e => e.Published && !e.Disabled);
 
 			return query.OrderByDescending(e => e.UpdatedAt);
 		}, page, limit);
@@ -67,6 +65,10 @@ public class EntitiesController : ControllerBase
 	public async Task<ActionResult<Entity>> FindAsync([FromRoute] int id)
 	{
 		var entity = await _entities.FindAsync(id);
+
+		if (!User.IsInRole(BasicAuthenticationUser.ROLE_ADMIN))
+			if(entity is null || !entity.Published || entity.Disabled)
+				return NotFound();
 
 		return entity is not null ? Ok(entity) : NotFound();
 	}

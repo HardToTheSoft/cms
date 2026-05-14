@@ -37,6 +37,7 @@ public class CmsController : ControllerBase
 	[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 	public async Task<IActionResult> EventsAsync([FromBody] List<EventModel> events)
 	{
+		//nameof(events) is here for swagger only. we wish to avoid reading the body stream twice...
 		Request.Body.Position = 0;
 
 		using var streamReader = new StreamReader(Request.Body, Encoding.UTF8);
