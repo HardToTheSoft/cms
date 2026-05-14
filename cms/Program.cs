@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 
 using Cms.Data;
+using Cms.Services;
 using Cms.Infrastructure;
 
 
@@ -53,6 +54,10 @@ if (!string.IsNullOrEmpty(dbBaseDirectory) && !Directory.Exists(dbBaseDirectory)
   Directory.CreateDirectory(dbBaseDirectory);
 
 webApplicationBuilder.Services.AddDbContext<CmsDbContext>(options => options.UseSqlite(connectionString));
+
+webApplicationBuilder.Services.AddScoped<IEntityService, EntityService>();
+webApplicationBuilder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+webApplicationBuilder.Services.AddTransient<ISearchService, SearchService>();
 
 var webApplication = webApplicationBuilder.Build();
 
