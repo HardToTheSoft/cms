@@ -1,15 +1,14 @@
 using Microsoft.OpenApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 
+using Cms.Data;
 using Cms.Infrastructure;
-using Cms.Infrastructure.Services;
 
 
 var webApplicationBuilder = WebApplication.CreateBuilder(args);
-
-webApplicationBuilder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 
 webApplicationBuilder.Services.AddControllers(options =>
   {
@@ -43,6 +42,15 @@ webApplicationBuilder.Services.AddSwaggerGen(options =>
   });
 });
 
+var connectionString = webApplicationBuilder.Configuration.GetConnectionString("DefaultConnection");
+
+var dbBaseDirectory = Path.GetDirectoryName(connectionString.Replace("Data Source=", "", StringComparison.OrdinalIgnoreCase));
+
+if (!Directory.Exists(dbBaseDirectory))
+  Directory.CreateDirectory(dbBaseDirectory);
+
+webApplicationBuilder.Services.AddDbContext<CmsDbContext>(options => options.UseSqlite(connectionString));
+
 var webApplication = webApplicationBuilder.Build();
 
 webApplication.UseMiddleware<GlobalExceptionMiddleware>();
@@ -51,6 +59,12 @@ if (webApplication.Environment.IsDevelopment())
 {
   webApplication.UseSwagger();
   webApplication.UseSwaggerUI();
+
+  using var serviceScope = webApplication.Services.CreateScope();
+
+  var dbContext = serviceScope.ServiceProvider.GetRequiredService<CmsDbContext>();
+
+  dbContext.Database.Migrate();
 }
 
 webApplication.UseHttpsRedirection();
