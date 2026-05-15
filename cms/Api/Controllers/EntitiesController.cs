@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Cms.Data;
 using Cms.Api.Dto;
 using Cms.Services;
-using Cms.Api.Authentication;
 using Cms.Domain.Extensions;
+using Cms.Api.Authentication;
 
 
 namespace Cms.Api.Controllers;

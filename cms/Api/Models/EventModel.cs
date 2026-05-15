@@ -6,8 +6,8 @@ namespace Cms.Models;
 
 public sealed class EventModel
 {
-  public string Id { get; set; }
-  public string Type { get; set; }
+  public string Id { get; set; } = default!;
+  public string Type { get; set; } = default!;
 
   public int? Version { get; set; }
 

@@ -40,7 +40,7 @@ public class CmsController : ControllerBase
 	{
 		_eventDispatcher.Dispatch(new CmsEventModel
 		{
-			Topic = "events/process",
+			Topic = CmsEventHandlerService.PROCESS_EVENTS_TOPIC,
 			Payload = events
 		});
 
