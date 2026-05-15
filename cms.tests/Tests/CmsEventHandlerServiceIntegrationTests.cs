@@ -1,17 +1,19 @@
 using System.Text.Json;
+
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
-using Cms.Models;
-using Cms.Services;
+using Cms.Api.Models;
+using Cms.Api.Services;
 using Cms.Tests.Infrastructure;
+using Cms.Infrastructure.Services;
 
 
 namespace Cms.Tests;
 
 
 [TestClass]
-public class CmsEventHandlerServiceTests
+public class CmsEventHandlerServiceIntegrationTests
 {
   #region Members
   private WebApplicationFactory<Program> _webApplicationFactory;
@@ -38,7 +40,7 @@ public class CmsEventHandlerServiceTests
 
 
   [TestMethod]
-  public async Task Process_WithMockDto_LogsAndReturnsExpected()
+  public async Task CmsEventHandler_HandleEvent_LogsAndReturnsSuccess()
   {
     using var scope = _webApplicationFactory.Services.CreateScope();
 

@@ -16,7 +16,7 @@ namespace cms.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
 
-            modelBuilder.Entity("Cms.Data.Entity", b =>
+            modelBuilder.Entity("Cms.Infrastructure.Entities.Entity", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");

@@ -18,7 +18,7 @@ public static class DtoExtensions
       Version = entity.Version,
       Published = entity.Published,
       Disabled = entity.Disabled,
-      PayloadJson = entity.Payload,
+      Payload = entity.Payload,
       CreatedAt = entity.UpdatedAt
     };
   }

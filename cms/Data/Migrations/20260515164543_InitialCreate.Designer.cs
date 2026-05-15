@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace cms.Data.Migrations
 {
     [DbContext(typeof(CmsDbContext))]
-    [Migration("20260515143405_InitialCreate")]
+    [Migration("20260515164543_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -19,7 +19,7 @@ namespace cms.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
 
-            modelBuilder.Entity("Cms.Data.Entity", b =>
+            modelBuilder.Entity("Cms.Infrastructure.Entities.Entity", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");

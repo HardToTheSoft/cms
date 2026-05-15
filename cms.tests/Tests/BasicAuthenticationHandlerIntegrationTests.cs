@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 
-using Cms.Models;
+using Cms.Api.Models;
 using Cms.Api.Authentication;
 
 
