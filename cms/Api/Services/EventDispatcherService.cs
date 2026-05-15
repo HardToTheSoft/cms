@@ -7,6 +7,9 @@ namespace Cms.Services;
 public sealed class EventDispatcherService : IEventDispatcherService
 {
   #region Members
+  private const string EVENT_HANDLER = "EventHandler";
+  private const string HANDLE_EVENT_ASYNC = "HandleEventAsync";
+
   private readonly IServiceProvider _serviceProvider;
 
   private readonly IEventQueueService _eventQueue;
@@ -59,7 +62,7 @@ public sealed class EventDispatcherService : IEventDispatcherService
       var eventInterface = eventType.GetInterfaces()
         .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEventHandler<>));
 
-      if (eventInterface!.GetProperty("EventHandler") is PropertyInfo eventHandlerPropertyInfo)
+      if (eventInterface!.GetProperty(EVENT_HANDLER) is PropertyInfo eventHandlerPropertyInfo)
       {
         eventHandler = eventHandlerPropertyInfo.GetValue(eventToProcess) as Func<TEvent, Task>;
 
@@ -74,7 +77,7 @@ public sealed class EventDispatcherService : IEventDispatcherService
 
     var eventHandlers = _serviceProvider.GetServices(eventHandlerType);
 
-    tasks.AddRange([.. eventHandlers.Select(eh => (Task)eventHandlerType.GetMethod("HandleEventAsync")!.Invoke(eh, [eventToProcess])!)]);
+    tasks.AddRange([.. eventHandlers.Select(eh => (Task)eventHandlerType.GetMethod(HANDLE_EVENT_ASYNC)!.Invoke(eh, [eventToProcess])!)]);
 
     if (tasks.Count > 0)
       await Task.WhenAll(tasks);

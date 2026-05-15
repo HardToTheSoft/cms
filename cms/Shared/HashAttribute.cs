@@ -1,4 +1,4 @@
-namespace Cms;
+namespace Cms.Shared;
 
 
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]

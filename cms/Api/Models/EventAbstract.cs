@@ -2,6 +2,7 @@ using System.Text;
 using System.Reflection;
 using System.Security.Cryptography;
 
+using Cms.Shared;
 using Cms.Services;
 
 
@@ -9,9 +10,11 @@ namespace Cms.Models;
 
 
 public abstract class EventAbstract<TEvent> : IEvent, IEventHandler<TEvent>
-		where TEvent : class, IEvent, IEventHandler<TEvent>, new()
+	where TEvent : class, IEvent, IEventHandler<TEvent>, new()
 {
 	#region Members
+	private const string NULL = "null";
+	
 	private string? _hash = null;
 	#endregion
 
@@ -61,7 +64,7 @@ public abstract class EventAbstract<TEvent> : IEvent, IEventHandler<TEvent>
 		var builder = new StringBuilder();
 
 		foreach (var propertyInfo in properties)
-			builder.Append($"{propertyInfo.Name}:{propertyInfo.GetValue(this)?.ToString() ?? "null"};");
+			builder.Append($"{propertyInfo.Name}:{propertyInfo.GetValue(this)?.ToString() ?? NULL};");
 
 		byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(builder.ToString()));
 

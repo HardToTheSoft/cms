@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 
 
-namespace Cms.Infrastructure;
+namespace Cms.Api.Authentication;
 
 
 public sealed class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>

@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace cms.Migrations
+namespace cms.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

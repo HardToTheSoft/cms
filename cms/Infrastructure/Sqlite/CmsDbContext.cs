@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 
+using Cms.Data;
 
-namespace Cms.Data;
+
+namespace Cms.Infrastructure.Sqlite;
 
 
 public sealed class CmsDbContext : DbContext
@@ -39,15 +41,6 @@ public sealed class CmsDbContext : DbContext
       entity.ToTable("Entities");
 
       entity.HasKey(e => e.Id);
-
-      // entity.Property(e => e.Version)
-      //   .HasDefaultValue(1);
-
-      // entity.Property(e => e.Published)
-      //   .HasDefaultValue(false);
-
-      // entity.Property(e => e.Disabled)
-      //   .HasDefaultValue(false);
 
       entity.Property(e => e.CreatedAt)
         .HasDefaultValueSql(TIMESTAMP_DEFAULT_VALUE);

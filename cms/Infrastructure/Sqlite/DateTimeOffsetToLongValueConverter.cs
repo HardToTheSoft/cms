@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 
-namespace Cms.Data;
+namespace Cms.Infrastructure.Sqlite;
 
 
 public class DateTimeOffsetToLongValueConverter : ValueConverter<DateTimeOffset, long>

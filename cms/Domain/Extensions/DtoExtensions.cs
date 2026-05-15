@@ -1,4 +1,8 @@
-namespace Cms.Data;
+using Cms.Data;
+using Cms.Api.Dto;
+
+
+namespace Cms.Domain.Extensions;
 
 
 public static class DtoExtensions

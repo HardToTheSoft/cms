@@ -1,4 +1,4 @@
-namespace Cms.Data;
+namespace Cms.Api.Dto;
 
 
 public sealed class EntityDto

@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 using Cms.Data;
+using Cms.Api.Dto;
 using Cms.Services;
-using Cms.Infrastructure;
+using Cms.Api.Authentication;
+using Cms.Domain.Extensions;
 
 
-namespace Cms.Controllers;
+namespace Cms.Api.Controllers;
 
 
 [Route("api")]

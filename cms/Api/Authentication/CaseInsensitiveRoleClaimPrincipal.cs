@@ -1,7 +1,7 @@
 using System.Security.Claims;
 
 
-namespace Cms.Infrastructure;
+namespace Cms.Api.Authentication;
 
 
 public class CaseInsensitiveRoleClaimPrincipal : ClaimsPrincipal

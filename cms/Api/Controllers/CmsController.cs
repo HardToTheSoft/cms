@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Authorization;
 
 using Cms.Models;
 using Cms.Services;
-using Cms.Infrastructure;
+using Cms.Api.Authentication;
 
 
-namespace Cms.Controllers;
+namespace Cms.Api.Controllers;
 
 
 [Route("cms")]

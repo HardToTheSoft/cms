@@ -1,8 +1,10 @@
 using System.Runtime.CompilerServices;
 using System.ComponentModel.DataAnnotations;
 
+using Cms.Shared;
 
-namespace Cms.Infrastructure;
+
+namespace Cms.Api.Authentication;
 
 
 public sealed class BasicAuthenticationUser

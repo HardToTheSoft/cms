@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace Cms.Infrastructure;
+namespace Cms.Shared;
 
 
 public sealed class GuidValidationAttribute : ValidationAttribute

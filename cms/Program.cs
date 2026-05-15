@@ -5,11 +5,11 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 
-using Cms.Data;
 using Cms.Services;
 using Cms.Extensions;
 using System.Reflection;
-using Cms.Infrastructure;
+using Cms.Api.Authentication;
+using Cms.Infrastructure.Sqlite;
 
 
 var webApplicationBuilder = WebApplication.CreateBuilder(args);
