@@ -430,3 +430,5 @@ FodyWeavers.xsd
 
 
 cms/Data/db/*
+
+*.lscache

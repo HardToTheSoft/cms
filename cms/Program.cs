@@ -78,7 +78,7 @@ if (webApplication.Environment.IsDevelopment())
   webApplication.UseSwagger();
   webApplication.UseSwaggerUI();
 
-  webApplication.UseMiddleware<EnableRequestBodyBufferingMiddleware>();
+  //webApplication.UseMiddleware<EnableRequestBodyBufferingMiddleware>();
 
   using var serviceScope = webApplication.Services.CreateScope();
 

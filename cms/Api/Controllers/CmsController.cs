@@ -34,20 +34,14 @@ public class CmsController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
 	[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 	public async Task<IActionResult> EventsAsync([FromBody] List<EventModel> events)
 	{
-		//nameof(events) is here for swagger only. we wish to avoid reading the body stream twice...
-		Request.Body.Position = 0;
-
-		using var streamReader = new StreamReader(Request.Body, Encoding.UTF8);
-
-		var body = await streamReader.ReadToEndAsync();
-
 		_eventDispatcher.Dispatch(new CmsEventModel
 		{
 			Topic = "events/process",
-			Payload = "body"
+			Payload = events
 		});
 
 		return Ok();

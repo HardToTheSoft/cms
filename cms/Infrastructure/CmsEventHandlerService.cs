@@ -10,13 +10,15 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
 {
   #region Members
   private static Dictionary<string, MethodInfo>? _methods = null;
+
+  private readonly ILogger<CmsEventHandlerService> _logger;
   #endregion
 
 
   #region Constructor
-  public CmsEventHandlerService()
+  public CmsEventHandlerService(ILogger<CmsEventHandlerService> logger)
   {
-    //...
+    _logger = logger;
   }
   #endregion
 
