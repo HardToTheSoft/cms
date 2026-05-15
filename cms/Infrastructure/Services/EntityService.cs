@@ -23,7 +23,7 @@ public class EntityService : IEntityService
 	public async Task<Entity?> FindAsync(params object?[]? keyValues) => await _entities.FindAsync(keyValues);
 
 
-	public async Task<Entity?> UnpublishAsync(int id)
+	public async Task<Entity?> UnpublishAsync(string id)
 	{
 		var entity = await _entities.FindAsync(id);
 

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace cms.Migrations
 {
     [DbContext(typeof(CmsDbContext))]
-    [Migration("20260514201825_InitialCreate")]
+    [Migration("20260515084622_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -21,9 +21,8 @@ namespace cms.Migrations
 
             modelBuilder.Entity("Cms.Data.Entity", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("CreatedAt")
                         .ValueGeneratedOnAdd()

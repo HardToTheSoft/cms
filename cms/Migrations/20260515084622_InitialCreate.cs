@@ -14,8 +14,7 @@ namespace cms.Migrations
                 name: "Entities",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     Version = table.Column<int>(type: "INTEGER", nullable: false),
                     Published = table.Column<bool>(type: "INTEGER", nullable: false),
                     Disabled = table.Column<bool>(type: "INTEGER", nullable: false),

@@ -37,7 +37,7 @@ public class EntitiesController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-	public async Task<ActionResult<IEnumerable<Entity>>> SearchAsync(
+	public async Task<ActionResult<IEnumerable<EntityDto>>> SearchAsync(
 		[FromQuery] int? page = 1,
 		[FromQuery] int? limit = 25)
 	{
@@ -51,7 +51,7 @@ public class EntitiesController : ControllerBase
 
 		Response.Headers.TryAdd("X-Total", total.ToString());
 
-		return Ok(entities);
+		return Ok(entities.Select(e => e.ToDto()));
 	}
 
 
@@ -62,15 +62,15 @@ public class EntitiesController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-	public async Task<ActionResult<Entity>> FindAsync([FromRoute] int id)
+	public async Task<ActionResult<EntityDto>> FindAsync([FromRoute] string id)
 	{
 		var entity = await _entities.FindAsync(id);
 
 		if (!User.IsInRole(BasicAuthenticationUser.ROLE_ADMIN))
-			if(entity is null || !entity.Published || entity.Disabled)
+			if (entity is null || !entity.Published || entity.Disabled)
 				return NotFound();
 
-		return entity is not null ? Ok(entity) : NotFound();
+		return entity is not null ? Ok(entity.ToDto()) : NotFound();
 	}
 
 
@@ -82,11 +82,11 @@ public class EntitiesController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 	[Authorize(Roles = BasicAuthenticationUser.ROLE_ADMIN)]
-	public async Task<ActionResult<Entity>> UnpublishAsync([FromRoute] int id)
+	public async Task<ActionResult<EntityDto>> UnpublishAsync([FromRoute] string id)
 	{
 		var entity = await _entities.UnpublishAsync(id);
 
-		return entity is not null ? Ok(entity) : BadRequest();
+		return entity is not null ? Ok(entity.ToDto()) : BadRequest();
 	}
 	#endregion
 }

@@ -6,7 +6,7 @@ namespace Cms.Services;
 
 public interface IEntityService
 {
-  Task<Entity?> FindAsync(params object?[]? keyValues);
+	Task<Entity?> FindAsync(params object?[]? keyValues);
 
-	Task<Entity?> UnpublishAsync(int id);
+	Task<Entity?> UnpublishAsync(string id);
 }

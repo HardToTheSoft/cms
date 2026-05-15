@@ -1,7 +1,7 @@
 namespace Cms.Data;
 
 
-public sealed class Entity : IEntity
+public sealed class EntityDto
 {
   public string Id { get; set; }
 
@@ -11,7 +11,4 @@ public sealed class Entity : IEntity
   public bool Disabled { get; set; }
 
   public string? PayloadJson { get; set; }
-
-  public DateTimeOffset CreatedAt { get; set; }
-  public DateTimeOffset UpdatedAt { get; set; }
 }
