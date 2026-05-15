@@ -1,7 +1,8 @@
+using System.Text.Json;
+
 using Microsoft.EntityFrameworkCore;
 
-using Cms.Data;
-using System.Text.Json;
+using Cms.Infrastructure.Entities;
 
 
 namespace Cms.Infrastructure.Sqlite;
@@ -21,7 +22,7 @@ public sealed class CmsDbContext : DbContext
 
 
   #region Properties
-  public DbSet<EntityEntity> Entities { get; set; }
+  public DbSet<Entity> Entities { get; set; }
   #endregion
 
 
@@ -40,7 +41,7 @@ public sealed class CmsDbContext : DbContext
   {
     base.OnModelCreating(modelBuilder);
 
-    modelBuilder.Entity<EntityEntity>(entity =>
+    modelBuilder.Entity<Entity>(entity =>
     {
       entity.ToTable("Entities");
 

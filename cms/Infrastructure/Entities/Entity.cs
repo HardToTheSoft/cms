@@ -1,10 +1,10 @@
 using System.Text.Json;
 
 
-namespace Cms.Data;
+namespace Cms.Infrastructure.Entities;
 
 
-public sealed class EntityEntity : IEntity
+public sealed class Entity : IEntity
 {
   public string Id { get; set; } = default!;
 

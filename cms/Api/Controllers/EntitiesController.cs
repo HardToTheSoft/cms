@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-using Cms.Data;
 using Cms.Api.Dto;
-using Cms.Services;
 using Cms.Domain.Extensions;
 using Cms.Api.Authentication;
+using Cms.Infrastructure.Entities;
+using Cms.Infrastructure.Services;
 
 
 namespace Cms.Api.Controllers;
@@ -43,7 +43,7 @@ public class EntitiesController : ControllerBase
 		[FromQuery] int? page = 1,
 		[FromQuery] int? limit = 25)
 	{
-		var (entities, total) = await _search.QueryAsync<EntityEntity>(query =>
+		var (entities, total) = await _search.QueryAsync<Entity>(query =>
 		{
 			if (!User.IsInRole(BasicAuthenticationUser.ROLE_ADMIN))
 				query = query.Where(e => e.Published && !e.Disabled);

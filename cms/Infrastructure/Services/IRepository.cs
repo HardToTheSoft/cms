@@ -1,7 +1,7 @@
-using Cms.Data;
+using Cms.Infrastructure.Entities;
 
 
-namespace Cms.Services;
+namespace Cms.Infrastructure.Services;
 
 
 public interface IRepository<TEntity> where TEntity : class, IEntity, new()

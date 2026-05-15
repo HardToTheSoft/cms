@@ -6,12 +6,12 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 
-using Cms.Services;
 using Cms.Api.Services;
 using Cms.Api.Extensions;
 using Cms.Api.Middlewares;
 using Cms.Api.Authentication;
 using Cms.Infrastructure.Sqlite;
+using Cms.Infrastructure.Services;
 
 
 var webApplicationBuilder = WebApplication.CreateBuilder(args);

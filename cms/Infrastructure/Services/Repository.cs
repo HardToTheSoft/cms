@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 
-using Cms.Data;
 using Cms.Infrastructure.Sqlite;
+using Cms.Infrastructure.Entities;
 
 
-namespace Cms.Services;
+namespace Cms.Infrastructure.Services;
 
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity, new()

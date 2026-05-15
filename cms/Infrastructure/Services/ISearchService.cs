@@ -1,8 +1,8 @@
 
-using Cms.Data;
+using Cms.Infrastructure.Entities;
 
 
-namespace Cms.Services;
+namespace Cms.Infrastructure.Services;
 
 
 public interface ISearchService

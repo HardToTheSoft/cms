@@ -1,9 +1,9 @@
 using System.Text.Json;
 using System.Reflection;
 
-using Cms.Data;
-using Cms.Services;
 using Cms.Api.Models;
+using Cms.Infrastructure.Entities;
+using Cms.Infrastructure.Services;
 
 
 namespace Cms.Api.Services;
@@ -74,7 +74,7 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
     int numberOfUpdatedEvents = 0;
     int numberOfIgnoredEvents = 0;
 
-    EntityEntity? entity;
+    Entity? entity;
 
     string id;
 
@@ -128,7 +128,7 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
       {
         _logger.LogInformation("Entity not found for Id {Id}. Creating new entity.", id);
 
-        entity = new Data.EntityEntity
+        entity = new Entity
         {
           Id = id,
           Version = latestEvent.Version!.Value,

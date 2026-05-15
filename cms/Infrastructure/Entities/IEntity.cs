@@ -1,4 +1,4 @@
-namespace Cms.Data;
+namespace Cms.Infrastructure.Entities;
 
 
 public interface IEntity { }
