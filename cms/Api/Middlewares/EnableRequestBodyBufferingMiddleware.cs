@@ -1,3 +1,6 @@
+namespace Cms.Api.Middlewares;
+
+
 public sealed class EnableRequestBodyBufferingMiddleware
 {
   #region Members

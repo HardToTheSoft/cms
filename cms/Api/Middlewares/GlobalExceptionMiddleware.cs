@@ -3,6 +3,9 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 
 
+namespace Cms.Api.Middlewares;
+
+
 public class GlobalExceptionMiddleware
 {
   #region Members

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Cms.Services;
 using Cms.Extensions;
 using System.Reflection;
+using Cms.Api.Middlewares;
 using Cms.Api.Authentication;
 using Cms.Infrastructure.Sqlite;
 
