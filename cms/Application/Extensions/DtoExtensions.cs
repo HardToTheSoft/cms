@@ -7,7 +7,7 @@ namespace Cms.Domain.Extensions;
 
 public static class DtoExtensions
 {
-  public static EntityDto? ToDto(this Entity? entity)
+  public static EntityDto? ToDto(this EntityEntity? entity)
   {
     if (entity is null)
       return null;

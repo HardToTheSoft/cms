@@ -2,7 +2,7 @@
 using System.Reflection;
 
 
-namespace Cms.Services;
+namespace Cms.Api.Services;
 
 
 public abstract class EventHandlerServiceAbstract<T> : IEventHandlerService<T>

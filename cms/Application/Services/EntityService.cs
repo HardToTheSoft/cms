@@ -7,12 +7,12 @@ namespace Cms.Services;
 public class EntityService : IEntityService
 {
 	#region Members
-	private readonly IRepository<Entity> _entities;
+	private readonly IRepository<EntityEntity> _entities;
 	#endregion
 
 
 	#region Constructor
-	public EntityService(IRepository<Entity> entities)
+	public EntityService(IRepository<EntityEntity> entities)
 	{
 		_entities = entities;
 	}
@@ -20,19 +20,19 @@ public class EntityService : IEntityService
 
 
 	#region Public methods
-	public async Task<Entity?> FindAsync(params object?[]? keyValues) => await _entities.FindAsync(keyValues);
+	public async Task<EntityEntity?> FindAsync(params object?[]? keyValues) => await _entities.FindAsync(keyValues);
 
 
-	public async Task AddAsync(Entity entity) => await _entities.AddAsync(entity);
+	public async Task AddAsync(EntityEntity entity) => await _entities.AddAsync(entity);
 
 
-	public async Task UpdateAsync(Entity entity) => await _entities.UpdateAsync(entity);
+	public async Task UpdateAsync(EntityEntity entity) => await _entities.UpdateAsync(entity);
 
 
 	public async Task DeleteAsync(params object?[]? keyValues) => await _entities.DeleteAsync(keyValues);
 
 
-	public async Task<Entity?> UnpublishAsync(string id)
+	public async Task<EntityEntity?> UnpublishAsync(string id)
 	{
 		var entity = await _entities.FindAsync(id);
 

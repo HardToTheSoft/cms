@@ -2,7 +2,7 @@ using System.Threading.Channels;
 using System.Collections.Concurrent;
 
 
-namespace Cms.Services;
+namespace Cms.Api.Services;
 
 
 public sealed class EventQueueService : IEventQueueService

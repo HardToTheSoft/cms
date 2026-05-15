@@ -1,7 +1,7 @@
 using System.Reflection;
 
 
-namespace Cms.Services;
+namespace Cms.Api.Services;
 
 
 public sealed class EventDispatcherService : IEventDispatcherService

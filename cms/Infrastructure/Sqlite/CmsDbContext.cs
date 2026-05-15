@@ -21,7 +21,7 @@ public sealed class CmsDbContext : DbContext
 
 
   #region Properties
-  public DbSet<Entity> Entities { get; set; }
+  public DbSet<EntityEntity> Entities { get; set; }
   #endregion
 
 
@@ -40,7 +40,7 @@ public sealed class CmsDbContext : DbContext
   {
     base.OnModelCreating(modelBuilder);
 
-    modelBuilder.Entity<Entity>(entity =>
+    modelBuilder.Entity<EntityEntity>(entity =>
     {
       entity.ToTable("Entities");
 

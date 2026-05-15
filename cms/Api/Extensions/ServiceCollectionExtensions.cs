@@ -1,9 +1,9 @@
 using System.Reflection;
 
-using Cms.Services;
+using Cms.Api.Services;
 
 
-namespace Cms.Extensions;
+namespace Cms.Api.Extensions;
 
 
 public static class ServiceCollectionExtensions

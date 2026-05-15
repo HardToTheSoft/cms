@@ -3,10 +3,10 @@ using System.Reflection;
 using System.Security.Cryptography;
 
 using Cms.Shared;
-using Cms.Services;
+using Cms.Api.Services;
 
 
-namespace Cms.Models;
+namespace Cms.Api.Models;
 
 
 public abstract class EventAbstract<TEvent> : IEvent, IEventHandler<TEvent>

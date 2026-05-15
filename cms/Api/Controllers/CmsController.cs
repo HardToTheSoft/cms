@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-using Cms.Models;
-using Cms.Services;
+using Cms.Api.Models;
+using Cms.Api.Services;
 using Cms.Api.Authentication;
 
 

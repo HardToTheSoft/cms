@@ -43,7 +43,7 @@ public class EntitiesController : ControllerBase
 		[FromQuery] int? page = 1,
 		[FromQuery] int? limit = 25)
 	{
-		var (entities, total) = await _search.QueryAsync<Entity>(query =>
+		var (entities, total) = await _search.QueryAsync<EntityEntity>(query =>
 		{
 			if (!User.IsInRole(BasicAuthenticationUser.ROLE_ADMIN))
 				query = query.Where(e => e.Published && !e.Disabled);

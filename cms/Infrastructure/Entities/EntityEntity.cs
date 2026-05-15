@@ -4,7 +4,7 @@ using System.Text.Json;
 namespace Cms.Data;
 
 
-public sealed class Entity : IEntity
+public sealed class EntityEntity : IEntity
 {
   public string Id { get; set; } = default!;
 

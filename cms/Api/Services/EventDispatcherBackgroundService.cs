@@ -1,4 +1,4 @@
-namespace Cms.Services;
+namespace Cms.Api.Services;
 
 
 public sealed class EventDispatcherBackgroundService : BackgroundService

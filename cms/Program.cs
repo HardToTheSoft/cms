@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.OpenApi;
 using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
@@ -6,8 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 
 using Cms.Services;
-using Cms.Extensions;
-using System.Reflection;
+using Cms.Api.Services;
+using Cms.Api.Extensions;
 using Cms.Api.Middlewares;
 using Cms.Api.Authentication;
 using Cms.Infrastructure.Sqlite;

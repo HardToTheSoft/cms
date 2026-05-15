@@ -1,7 +1,7 @@
 using System.Text.Json;
 
 
-namespace Cms.Models;
+namespace Cms.Api.Models;
 
 
 public sealed class EventModel

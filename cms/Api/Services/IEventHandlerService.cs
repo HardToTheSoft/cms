@@ -1,4 +1,4 @@
-namespace Cms.Services;
+namespace Cms.Api.Services;
 
 
 public interface IEventHandlerService<in TEvent> where TEvent : class, IEvent, IEventHandler<TEvent>, new()
