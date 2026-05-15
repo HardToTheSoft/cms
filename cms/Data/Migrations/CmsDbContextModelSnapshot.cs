@@ -29,7 +29,8 @@ namespace cms.Data.Migrations
                     b.Property<bool>("Disabled")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("PayloadJson")
+                    b.Property<string>("Payload")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Published")

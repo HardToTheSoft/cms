@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace cms.Data.Migrations
 {
     [DbContext(typeof(CmsDbContext))]
-    [Migration("20260515113850_InitialCreate")]
+    [Migration("20260515143405_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -32,7 +32,8 @@ namespace cms.Data.Migrations
                     b.Property<bool>("Disabled")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("PayloadJson")
+                    b.Property<string>("Payload")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Published")

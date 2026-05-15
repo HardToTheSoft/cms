@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 using Cms.Data;
+using System.Text.Json;
 
 
 namespace Cms.Infrastructure.Sqlite;
@@ -29,6 +30,9 @@ public sealed class CmsDbContext : DbContext
   {
     configurationBuilder.Properties<DateTimeOffset>()
       .HaveConversion<DateTimeOffsetToLongValueConverter>();
+
+    configurationBuilder.Properties<JsonElement>()
+      .HaveConversion<JObjectToJsonStringValueConverter>();
   }
 
 
