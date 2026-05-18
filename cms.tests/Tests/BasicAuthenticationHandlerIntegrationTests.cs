@@ -26,8 +26,7 @@ public class BasicAuthenticationHandlerIntegrationTests
     new()
     {
       Id = "1",
-      Type = "event",
-      Payload = JsonDocument.Parse("{}")
+      Type = "event"
     }
   });
 
@@ -47,8 +46,7 @@ public class BasicAuthenticationHandlerIntegrationTests
   [TestInitialize]
   public void Setup()
   {
-    // _webApplicationFactory = new WebApplicationFactory<Program>();
-    _webApplicationFactory = new MyWebApplicationFactory();
+    _webApplicationFactory = new WebApplicationFactory<Program>();
 
     _httpClient = _webApplicationFactory.CreateClient();
   }

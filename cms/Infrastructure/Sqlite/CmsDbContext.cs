@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 using Microsoft.EntityFrameworkCore;
 
 using Cms.Infrastructure.Entities;
@@ -27,16 +25,6 @@ public sealed class CmsDbContext : DbContext
 
 
   #region Private methods
-  protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
-  {
-    configurationBuilder.Properties<DateTimeOffset>()
-      .HaveConversion<DateTimeOffsetToLongValueConverter>();
-
-    configurationBuilder.Properties<JsonDocument>()
-      .HaveConversion<JsonDocumentToJsonStringValueConverter>();
-  }
-
-
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
@@ -48,10 +36,18 @@ public sealed class CmsDbContext : DbContext
       entity.HasKey(e => e.Id);
 
       entity.Property(e => e.CreatedAt)
-        .HasDefaultValueSql(TIMESTAMP_DEFAULT_VALUE);
+        .HasDefaultValueSql(TIMESTAMP_DEFAULT_VALUE)
+        .HasConversion(new DateTimeOffsetToLongValueConverter(true))
+        .IsRequired(true);
+
+      entity.Property(e => e.PayloadJson)
+        .HasConversion(new JsonDocumentToJsonStringValueConverter(false))
+        .IsRequired(false);
 
       entity.Property(e => e.UpdatedAt)
-        .HasDefaultValueSql(TIMESTAMP_DEFAULT_VALUE);
+        .HasDefaultValueSql(TIMESTAMP_DEFAULT_VALUE)
+        .HasConversion(new DateTimeOffsetToLongValueConverter(true))
+        .IsRequired(true);
     });
   }
   #endregion

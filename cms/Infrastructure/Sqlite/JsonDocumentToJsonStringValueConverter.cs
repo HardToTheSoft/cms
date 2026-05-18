@@ -3,29 +3,45 @@
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 
-public class JsonDocumentToJsonStringValueConverter : ValueConverter<JsonDocument, string>
+public class JsonDocumentToJsonStringValueConverter : ValueConverter<JsonDocument?, string?>
 {
   #region Constructor
-  public JsonDocumentToJsonStringValueConverter()
-    : base(static jsonDocument => JsonSerializer.Serialize(jsonDocument),
-      static jsonString => SafeParse(jsonString))
+  public JsonDocumentToJsonStringValueConverter(bool isRequired)
+    : base(jsonDocument => SafeSerialize(jsonDocument, isRequired)!,
+      jsonString => SafeDeserialize(jsonString, isRequired))
   { }
   #endregion
 
 
   #region Private methods
-  private static JsonDocument SafeParse(string jsonString)
+  private static string? SafeSerialize(JsonDocument? jsonDocument, bool isRequired)
   {
-    if (string.IsNullOrWhiteSpace(jsonString))
-      return JsonDocument.Parse("{}");
+    if (jsonDocument is null)
+      return isRequired ? string.Empty : null;
 
     try
     {
-      return JsonDocument.Parse(jsonString);
+      return JsonSerializer.Serialize(jsonDocument);
     }
-    catch (JsonException)
+    catch
     {
-      return JsonDocument.Parse("{}");
+      return isRequired ? string.Empty : null;
+    }
+  }
+
+
+  private static JsonDocument? SafeDeserialize(string? json, bool isRequired)
+  {
+    if (string.IsNullOrWhiteSpace(json))
+      return isRequired ? JsonDocument.Parse("{}") : null;
+
+    try
+    {
+      return JsonDocument.Parse(json);
+    }
+    catch
+    {
+      return isRequired ? JsonDocument.Parse("{}") : null;
     }
   }
   #endregion

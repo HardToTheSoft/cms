@@ -20,8 +20,6 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
 
   private static Dictionary<string, MethodInfo>? _methods = null;
 
-  private static readonly JsonDocument _emptyPayload = JsonDocument.Parse("{}");
-
   private readonly ILogger<CmsEventHandlerService> _logger;
 
   private readonly IEntityService _entities;
@@ -57,131 +55,147 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
   [Topics(PROCESS_EVENTS_TOPIC)]
   private async Task ProcessEventsAsync(CmsEventModel cmsEventModel)
   {
-    if (cmsEventModel.Payload is not List<EventModel> events)
+    try
     {
-      _logger.LogWarning("Payload is empty. Skip processing...");
-
-      return;
-    }
-
-    var groupedEvents = events.GroupBy(e => e.Id);
-
-    _logger.LogInformation("Processing {Count} grouped events", groupedEvents.Count());
-
-    int numberOfProcessedEvents = 0;
-    int numberOfPDeletedEvents = 0;
-    int numberOfCreatedEvents = 0;
-    int numberOfUpdatedEvents = 0;
-    int numberOfIgnoredEvents = 0;
-
-    Entity? entity;
-
-    string id;
-
-    foreach (var eventGroup in groupedEvents)
-    {
-      ++numberOfProcessedEvents;
-
-      id = eventGroup.Key;
-
-      _logger.LogDebug("Processing group for Id {Id} with {Count} events", id, eventGroup.Count());
-
-      if (eventGroup.Any(e => e.Type.Equals(DELETE, StringComparison.OrdinalIgnoreCase)))
+      if (cmsEventModel.Payload is not List<EventModel> events)
       {
-        _logger.LogInformation("Delete event detected for Id {Id}. Executing delete flow.", id);
+        _logger.LogWarning("Payload is empty. Skip processing...");
 
-        await _entities.DeleteAsync(id);
-
-        ++numberOfPDeletedEvents;
-
-        _logger.LogDebug("Delete completed for Id {Id}", id);
-
-        continue;
+        return;
       }
 
-      var latestEvent = eventGroup.Where(e => (e.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase)
-            || e.Type.Equals(UNPUBLISH, StringComparison.OrdinalIgnoreCase))
-          && e.Version.HasValue)
-        .OrderByDescending(e => e.Version!.Value)
-        .ThenByDescending(e => e.Timestamp)
-        .FirstOrDefault();
+      var groupedEvents = events.GroupBy(e => e.Id);
 
-      if (latestEvent is null)
+      _logger.LogInformation("Processing {Count} grouped events", groupedEvents.Count());
+
+      int numberOfProcessedEvents = 0;
+      int numberOfPDeletedEvents = 0;
+      int numberOfCreatedEvents = 0;
+      int numberOfUpdatedEvents = 0;
+      int numberOfIgnoredEvents = 0;
+
+      Entity? entity;
+
+      string id;
+
+      foreach (var eventGroup in groupedEvents)
       {
-        _logger.LogWarning("No published/unpublished events with a valid Version found for Id {Id}", id);
+        id = eventGroup.Key;
 
-        ++numberOfIgnoredEvents;
+        try
+        {
+          ++numberOfProcessedEvents;
 
-        continue;
+          _logger.LogDebug("Processing group for Id {Id} with {Count} events", id, eventGroup.Count());
+
+          if (eventGroup.Any(e => e.Type.Equals(DELETE, StringComparison.OrdinalIgnoreCase)))
+          {
+            _logger.LogInformation("Delete event detected for Id {Id}. Executing delete flow.", id);
+
+            await _entities.DeleteAsync(id);
+
+            ++numberOfPDeletedEvents;
+
+            _logger.LogDebug("Delete completed for Id {Id}", id);
+
+            continue;
+          }
+
+          var latestEvent = eventGroup.Where(e => (e.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase)
+                || e.Type.Equals(UNPUBLISH, StringComparison.OrdinalIgnoreCase))
+              && e.Version.HasValue)
+            .OrderByDescending(e => e.Version!.Value)
+            .ThenByDescending(e => e.Timestamp)
+            .FirstOrDefault();
+
+          if (latestEvent is null)
+          {
+            _logger.LogWarning("No published/unpublished events with a valid Version found for Id {Id}", id);
+
+            ++numberOfIgnoredEvents;
+
+            continue;
+          }
+
+          _logger.LogInformation(
+            "Latest event selected for Id {Id}. Type: {Type}, Version: {Version}, Timestamp: {Timestamp}",
+            latestEvent.Id,
+            latestEvent.Type,
+            latestEvent.Version,
+            latestEvent.Timestamp);
+
+          entity = await _entities.FindAsync(id);
+
+          if (entity is null)
+          {
+            _logger.LogInformation("Entity not found for Id {Id}. Creating new entity.", id);
+
+            entity = new Entity
+            {
+              Id = id,
+              Version = latestEvent.Version!.Value,
+              Published = latestEvent.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase),
+              PayloadJson = latestEvent.PayloadJson
+            };
+
+            await _entities.AddAsync(entity);
+
+            ++numberOfCreatedEvents;
+
+            _logger.LogDebug("Entity created for Id {Id} with Version {Version}", id, entity.Version);
+
+            continue;
+          }
+          else if (entity.Version < latestEvent.Version!.Value)
+          {
+            _logger.LogInformation(
+              "Updating entity for Id {Id}. Old Version: {OldVersion}, New Version: {NewVersion}",
+              id,
+              entity.Version,
+              latestEvent.Version);
+
+            entity.PayloadJson = latestEvent.PayloadJson;
+            entity.Published = latestEvent.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase);
+
+            await _entities.UpdateAsync(entity);
+
+            ++numberOfUpdatedEvents;
+
+            _logger.LogDebug("Entity updated for Id {Id}", id);
+
+            continue;
+          }
+
+          _logger.LogDebug(
+            "Ignoring event for Id {Id}. Current Version: {CurrentVersion}, Event Version: {EventVersion}",
+            id,
+            entity?.Version,
+            latestEvent.Version);
+
+          ++numberOfIgnoredEvents;
+        }
+        catch (Exception ex)
+        {
+          _logger.LogError(ex, "An error occurred while processing event for Id {Id}", id);
+        }
       }
 
       _logger.LogInformation(
-        "Latest event selected for Id {Id}. Type: {Type}, Version: {Version}, Timestamp: {Timestamp}",
-        latestEvent.Id,
-        latestEvent.Type,
-        latestEvent.Version,
-        latestEvent.Timestamp);
+        "Finished processing events. Total: {Total}, Deleted: {Deleted}, Created: {Created}, Updated: {Updated}, Ignored: {Ignored}",
+        numberOfProcessedEvents,
+        numberOfPDeletedEvents,
+        numberOfCreatedEvents,
+        numberOfUpdatedEvents,
+        numberOfIgnoredEvents);
 
-      entity = await _entities.FindAsync(id);
-
-      if (entity is null)
-      {
-        _logger.LogInformation("Entity not found for Id {Id}. Creating new entity.", id);
-
-        entity = new Entity
-        {
-          Id = id,
-          Version = latestEvent.Version!.Value,
-          Published = latestEvent.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase),
-          Payload = latestEvent.Payload ?? _emptyPayload
-        };
-
-        await _entities.AddAsync(entity);
-
-        ++numberOfCreatedEvents;
-
-        _logger.LogDebug("Entity created for Id {Id} with Version {Version}", id, entity.Version);
-
-        continue;
-      }
-      else if (entity.Version < latestEvent.Version!.Value)
-      {
-        _logger.LogInformation(
-          "Updating entity for Id {Id}. Old Version: {OldVersion}, New Version: {NewVersion}",
-          id,
-          entity.Version,
-          latestEvent.Version);
-
-        entity.Payload = latestEvent.Payload ?? _emptyPayload;
-        entity.Published = latestEvent.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase);
-
-        await _entities.UpdateAsync(entity);
-
-        ++numberOfUpdatedEvents;
-
-        _logger.LogDebug("Entity updated for Id {Id}", id);
-
-        continue;
-      }
-
-      _logger.LogDebug(
-        "Ignoring event for Id {Id}. Current Version: {CurrentVersion}, Event Version: {EventVersion}",
-        id,
-        entity?.Version,
-        latestEvent.Version);
-
-      ++numberOfIgnoredEvents;
+      _logger.LogInformation("SUCCESS");
     }
+    catch (Exception ex)
+    {
+      _logger.LogError(ex, "An error occurred while processing events.");
 
-    _logger.LogInformation(
-      "Finished processing events. Total: {Total}, Deleted: {Deleted}, Created: {Created}, Updated: {Updated}, Ignored: {Ignored}",
-      numberOfProcessedEvents,
-      numberOfPDeletedEvents,
-      numberOfCreatedEvents,
-      numberOfUpdatedEvents,
-      numberOfIgnoredEvents);
-
-    _logger.LogInformation("SUCCESS");
+      _logger.LogInformation("FAIL");
+    }
   }
   #endregion
 }

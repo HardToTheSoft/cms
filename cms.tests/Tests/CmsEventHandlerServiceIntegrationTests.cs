@@ -36,8 +36,7 @@ public class CmsEventHandlerServiceIntegrationTests
   [TestInitialize]
   public void Setup()
   {
-    //_webApplicationFactory = new WebApplicationFactory<Program>();
-    _webApplicationFactory = new MyWebApplicationFactory();
+    _webApplicationFactory = new WebApplicationFactory<Program>();
 
     _logger = new TestLogger<CmsEventHandlerService>(TestContext);
   }
@@ -61,7 +60,7 @@ public class CmsEventHandlerServiceIntegrationTests
         {
           Id = "X",
           Type = "publish",
-          Payload = JsonDocument.Parse("{\"example\": \"value\" }"),
+          PayloadJson = JsonDocument.Parse("{\"example\": \"value\" }"),
           Version = 2,
           Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
         },
@@ -76,7 +75,7 @@ public class CmsEventHandlerServiceIntegrationTests
         {
           Id = "Z",
           Type = "unPublish",
-          Payload = JsonDocument.Parse("{\"example\": \"value\" }"),
+          PayloadJson = JsonDocument.Parse("{\"example\": \"value\" }"),
           Version = 4,
           Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
         }
@@ -88,31 +87,4 @@ public class CmsEventHandlerServiceIntegrationTests
     Assert.IsTrue(success);
   }
   #endregion
-}
-
-public class MyWebApplicationFactory : WebApplicationFactory<Program>
-{
-  protected override void ConfigureWebHost(IWebHostBuilder builder)
-  {
-    builder.ConfigureServices(services =>
-    {
-      var descriptor = services.SingleOrDefault(
-              d => d.ServiceType == typeof(DbContextOptions<CmsDbContext>));
-
-      services.Remove(descriptor);
-
-      services.AddDbContext<CmsDbContext>(options =>
-          {
-            options.UseSqlite("DataSource=:memory:");
-          });
-
-      var sp = services.BuildServiceProvider();
-
-      using var serviceScope = sp.CreateScope();
-
-      var dbContext = serviceScope.ServiceProvider.GetRequiredService<CmsDbContext>();
-
-      dbContext.Database.Migrate();
-    });
-  }
 }

@@ -14,5 +14,5 @@ public interface IEntityService
 
 	Task DeleteAsync(params object?[]? keyValues);
 
-	Task<Entity?> UnpublishAsync(string id);
+	Task<Entity?> DisableAsync(string id);
 }

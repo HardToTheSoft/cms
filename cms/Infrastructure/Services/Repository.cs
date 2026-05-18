@@ -80,7 +80,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, I
 
     await _writeDbContext.SaveChangesAsync();
   }
-
+  
 
   public async Task UpdateAsync(TEntity entity)
   {

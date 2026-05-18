@@ -32,7 +32,7 @@ public class EntityService : IEntityService
 	public async Task DeleteAsync(params object?[]? keyValues) => await _entities.DeleteAsync(keyValues);
 
 
-	public async Task<Entity?> UnpublishAsync(string id)
+	public async Task<Entity?> DisableAsync(string id)
 	{
 		var entity = await _entities.FindAsync(id);
 

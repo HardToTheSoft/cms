@@ -18,7 +18,7 @@ namespace cms.Data.Migrations
                     Version = table.Column<int>(type: "INTEGER", nullable: false),
                     Published = table.Column<bool>(type: "INTEGER", nullable: false),
                     Disabled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Payload = table.Column<string>(type: "TEXT", nullable: false),
+                    PayloadJson = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedAt = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "(strftime('%s','now') * 1000)"),
                     UpdatedAt = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "(strftime('%s','now') * 1000)")
                 },

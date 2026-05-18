@@ -11,7 +11,7 @@ public sealed class EventModel
 
   public int? Version { get; set; }
 
-  public JsonDocument? Payload { get; set; }
+  public JsonDocument? PayloadJson { get; set; }
 
   public DateTimeOffset Timestamp { get; set; }
 }

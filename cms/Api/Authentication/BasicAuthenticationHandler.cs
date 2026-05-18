@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Net.Http.Headers;
 using System.Text.Encodings.Web;
 
+using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 
@@ -30,7 +31,7 @@ public sealed class BasicAuthenticationHandler : AuthenticationHandler<Authentic
   #region Private methods
   protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
   {
-    if (!Request.Headers.TryGetValue("Authorization", out var authorizationHeaderValue)
+    if (!Request.Headers.TryGetValue(HeaderNames.Authorization, out var authorizationHeaderValue)
       || string.IsNullOrWhiteSpace(authorizationHeaderValue))
       return AuthenticateResult.Fail("Missing Authorization Header");
 
