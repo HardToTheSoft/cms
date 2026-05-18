@@ -13,7 +13,7 @@ public sealed class Entity : IEntity
   public bool Published { get; set; }
   public bool Disabled { get; set; }
 
-  public JsonElement Payload { get; set; }
+  public JsonDocument Payload { get; set; }
 
   public DateTimeOffset CreatedAt { get; set; }
   public DateTimeOffset UpdatedAt { get; set; }

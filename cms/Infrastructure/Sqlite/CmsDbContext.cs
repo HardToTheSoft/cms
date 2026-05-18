@@ -32,8 +32,8 @@ public sealed class CmsDbContext : DbContext
     configurationBuilder.Properties<DateTimeOffset>()
       .HaveConversion<DateTimeOffsetToLongValueConverter>();
 
-    configurationBuilder.Properties<JsonElement>()
-      .HaveConversion<JObjectToJsonStringValueConverter>();
+    configurationBuilder.Properties<JsonDocument>()
+      .HaveConversion<JsonDocumentToJsonStringValueConverter>();
   }
 
 

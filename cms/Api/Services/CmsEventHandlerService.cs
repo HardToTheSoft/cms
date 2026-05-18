@@ -20,7 +20,7 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
 
   private static Dictionary<string, MethodInfo>? _methods = null;
 
-  private static readonly JsonElement _emptyPayload = JsonElement.Parse("{}");
+  private static readonly JsonDocument _emptyPayload = JsonDocument.Parse("{}");
 
   private readonly ILogger<CmsEventHandlerService> _logger;
 

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
@@ -25,7 +26,8 @@ public class BasicAuthenticationHandlerIntegrationTests
     new()
     {
       Id = "1",
-      Type = "event"
+      Type = "event",
+      Payload = JsonDocument.Parse("{}")
     }
   });
 
@@ -45,7 +47,8 @@ public class BasicAuthenticationHandlerIntegrationTests
   [TestInitialize]
   public void Setup()
   {
-    _webApplicationFactory = new WebApplicationFactory<Program>();
+    // _webApplicationFactory = new WebApplicationFactory<Program>();
+    _webApplicationFactory = new MyWebApplicationFactory();
 
     _httpClient = _webApplicationFactory.CreateClient();
   }
@@ -53,8 +56,8 @@ public class BasicAuthenticationHandlerIntegrationTests
 
   [TestMethod]
   [DataRow("user_consummer", "db041de3-afd3-4810-8a5a-d46a5fbc2d31", "/api/entities.json", "GET")]
-  [DataRow("admin_consumer", "db041de3-afd3-4810-8a5a-d46a5fbc2d31", "/api/entities.json", "GET")]
-  [DataRow("cms_events_processor", "db041de3-afd3-4810-8a5a-d46a5fbc2d31", "/cms/events.json", "POST")]
+  [DataRow("admin_consumer", "db041de3-afd3-4810-8a5a-d46a5fbc2d32", "/api/entities.json", "GET")]
+  [DataRow("cms_events_processor", "db041de3-afd3-4810-8a5a-d46a5fbc2d33", "/cms/events.json", "POST")]
   public async Task BasicAuthentication_ValidUser_ReturnsSuccess(
     string userName,
     string password,
@@ -71,9 +74,9 @@ public class BasicAuthenticationHandlerIntegrationTests
   [DataRow("user_consummer", "not_valid_guid", "/api/entities.json", "GET")]
   [DataRow("ser__not_valid_user_prefix", "db041de3-afd3-4810-8a5a-d46a5fbc2d31", "/api/entities.json", "GET")]
   [DataRow("admin_consumer", "not_valid_guid", "/api/entities.json", "GET")]
-  [DataRow("dmin__not_valid_user_prefix", "db041de3-afd3-4810-8a5a-d46a5fbc2d31", "/api/entities.json", "GET")]
+  [DataRow("dmin__not_valid_user_prefix", "db041de3-afd3-4810-8a5a-d46a5fbc2d32", "/api/entities.json", "GET")]
   [DataRow("cms_events_processor", "not_valid_guid", "/cms/events.json", "POST")]
-  [DataRow("ms_not_valid_user_prefix", "db041de3-afd3-4810-8a5a-d46a5fbc2d31", "/cms/events.json", "POST")]
+  [DataRow("ms_not_valid_user_prefix", "db041de3-afd3-4810-8a5a-d46a5fbc2d33", "/cms/events.json", "POST")]
   public async Task BasicAuthentication_InvalidUser_ReturnsUnauthorized(
     string userName,
     string password,
