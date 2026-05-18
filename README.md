@@ -25,6 +25,7 @@ dotnet restore
 3. Apply EF Core migrations:
 
 ```bash
+cd cms
 dotnet ef database update
 ```
 
