@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-using Cms.Api.Models;
-using Cms.Api.Services;
 using Cms.Api.Authentication;
+using Cms.Application.Services;
+using Cms.Application.Interfaces;
+
+using Cms.Application.Models;
 
 
 namespace Cms.Api.Controllers;

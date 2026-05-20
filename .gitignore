@@ -429,6 +429,6 @@ FodyWeavers.xsd
 *.msp
 
 
-cms/Data/db/*
+cms/Infrastructure/Persistence/Data/db/*
 
 *.lscache

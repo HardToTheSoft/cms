@@ -6,12 +6,20 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 
-using Cms.Api.Services;
-using Cms.Api.Extensions;
 using Cms.Api.Middlewares;
 using Cms.Api.Authentication;
-using Cms.Infrastructure.Sqlite;
+
+using Cms.Application.Services;
+using Cms.Application.Extensions;
+using Cms.Application.Interfaces;
+
+using Cms.Domain;
+
 using Cms.Infrastructure.Services;
+using Cms.Infrastructure.Persistence;
+using Cms.Infrastructure.EventHandler;
+using Cms.Infrastructure.Persistence.Services;
+using Cms.Infrastructure.Persistence.Repositories;
 
 
 var webApplicationBuilder = WebApplication.CreateBuilder(args);
@@ -57,19 +65,23 @@ var dbBaseDirectory = Path.GetDirectoryName(sqliteConnectionStringBuilder.DataSo
 if (!string.IsNullOrEmpty(dbBaseDirectory) && !Directory.Exists(dbBaseDirectory))
   Directory.CreateDirectory(dbBaseDirectory);
 
-webApplicationBuilder.Services.AddDbContext<CmsDbContext>(options => options.UseSqlite(connectionString));
+webApplicationBuilder.Services.AddDbContext<SqliteDbContext>(options => options.UseSqlite(connectionString));
 
 webApplicationBuilder.Services.AddHostedService<EventDispatcherBackgroundService>();
+
+webApplicationBuilder.Services.AddHttpContextAccessor();
 
 webApplicationBuilder.Services.AddSingleton<IEventQueueService, EventQueueService>();
 
 webApplicationBuilder.Services.AddEventHandlers(Assembly.GetExecutingAssembly());
 
+webApplicationBuilder.Services.AddScoped<IUserContext, UserContextService>();
 webApplicationBuilder.Services.AddScoped<IEventDispatcherService, EventDispatcherService>();
-webApplicationBuilder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 webApplicationBuilder.Services.AddScoped<IEntityService, EntityService>();
+webApplicationBuilder.Services.AddScoped<IEntityRepository<Entity>, EntityRepositoryService>();
+webApplicationBuilder.Services.AddScoped(typeof(IRepository<>), typeof(RepositoryService<>));
 
-webApplicationBuilder.Services.AddTransient<ISearchService, SearchService>();
+webApplicationBuilder.Services.AddTransient<ISearchRepositoryService<EntityRepository>, SearchRepositoryService>();
 
 var webApplication = webApplicationBuilder.Build();
 

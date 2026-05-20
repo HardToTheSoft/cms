@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-using Cms.Api.Dto;
-using Cms.Domain.Extensions;
 using Cms.Api.Authentication;
-using Cms.Infrastructure.Entities;
-using Cms.Infrastructure.Services;
+
+using Cms.Application.Dto;
+using Cms.Application.Interfaces;
 
 
 namespace Cms.Api.Controllers;
@@ -17,16 +16,13 @@ namespace Cms.Api.Controllers;
 public class EntitiesController : ControllerBase
 {
 	#region Members
-	private readonly ISearchService _search;
-
 	private readonly IEntityService _entities;
 	#endregion
 
 
 	#region Constructor
-	public EntitiesController(ISearchService search, IEntityService entities)
+	public EntitiesController(IEntityService entities)
 	{
-		_search = search;
 		_entities = entities;
 	}
 	#endregion
@@ -43,26 +39,19 @@ public class EntitiesController : ControllerBase
 		[FromQuery] int? page = 1,
 		[FromQuery] int? limit = 25)
 	{
-		bool isAdmin = true;
+		(IEnumerable<object> Entities, int Total)? queryResult;
 
-		var (entities, total) = await _search.QueryAsync<Entity>(query =>
-		{
-			if (!User.IsInRole(BasicAuthenticationUser.ROLE_ADMIN))
-			{
-				isAdmin = false;
-
-				query = query.Where(e => e.Published && !e.Disabled);
-			}
-
-			return query.OrderByDescending(e => e.UpdatedAt);
-		}, page, limit);
-
-		Response.Headers.TryAdd("X-Total", total.ToString());
-
-		if (isAdmin)
-			return Ok(entities.Select(e => e.ToAdminEntityDto()));
+		if (User.IsInRole(BasicAuthenticationUser.ROLE_ADMIN))
+			queryResult = await _entities.QueryAdminEntityDtoAsync(page, limit);
 		else
-			return Ok(entities.Select(e => e.ToUserEntityDto()));
+			queryResult = await _entities.QueryUserEntityDtoAsync(page, limit);
+
+		if (queryResult is null)
+			return BadRequest();
+
+		Response.Headers.TryAdd("X-Total", queryResult.Value.Total.ToString());
+
+		return Ok(queryResult.Value.Entities);
 	}
 
 
@@ -75,19 +64,14 @@ public class EntitiesController : ControllerBase
 	[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 	public async Task<ActionResult<object>> FindAsync([FromRoute] string id)
 	{
-		var entity = await _entities.FindAsync(id);
+		object? entityDto;
 
-		bool isAdmin = true;
+		if (User.IsInRole(BasicAuthenticationUser.ROLE_ADMIN))
+			entityDto = await _entities.GetAdminEntityDtoAsync(id);
+		else
+			entityDto = await _entities.GetUserEntityDtoAsync(id);
 
-		if (!User.IsInRole(BasicAuthenticationUser.ROLE_ADMIN))
-		{
-			isAdmin = false;
-
-			if (entity is null || !entity.Published || entity.Disabled)
-				return NotFound();
-		}
-
-		return entity is not null ? Ok(isAdmin ? entity.ToAdminEntityDto() : entity.ToUserEntityDto()) : NotFound();
+		return entityDto is not null ? Ok(entityDto) : NotFound();
 	}
 
 
@@ -101,9 +85,9 @@ public class EntitiesController : ControllerBase
 	[Authorize(Roles = BasicAuthenticationUser.ROLE_ADMIN)]
 	public async Task<ActionResult<AdminEntityDto>> DisableAsync([FromRoute] string id)
 	{
-		var entity = await _entities.DisableAsync(id);
+		var adminEntityDto = await _entities.DisableAsync(id);
 
-		return entity is not null ? Ok(entity.ToAdminEntityDto()) : BadRequest();
+		return adminEntityDto is not null ? Ok(adminEntityDto) : BadRequest();
 	}
 	#endregion
 }
