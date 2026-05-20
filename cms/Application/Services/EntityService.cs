@@ -107,8 +107,7 @@ public class EntityService : IEntityService
 		if (entity.Disabled)
 			return entity.ToAdminEntityDto();
 
-		entity.Disabled = true;
-		entity.UpdatedAt = DateTimeOffset.UtcNow;
+		entity.Disable();
 
 		await _entities.UpdateAsync(entity);
 

@@ -94,11 +94,11 @@ if (webApplication.Environment.IsDevelopment())
 
   //webApplication.UseMiddleware<EnableRequestBodyBufferingMiddleware>();
 
-  // using var serviceScope = webApplication.Services.CreateScope();
+  using var serviceScope = webApplication.Services.CreateScope();
 
-  // var dbContext = serviceScope.ServiceProvider.GetRequiredService<CmsDbContext>();
+  var dbContext = serviceScope.ServiceProvider.GetRequiredService<SqliteDbContext>();
 
-  // dbContext.Database.Migrate();
+  dbContext.Database.Migrate();
 }
 
 webApplication.UseHttpsRedirection();

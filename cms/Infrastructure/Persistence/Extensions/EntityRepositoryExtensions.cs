@@ -16,12 +16,14 @@ public static class EntityRepositoryExtensions
       return null;
 
     return new Entity
-    {
-      Id = sqliteEntityRepository.Id,
-      Version = sqliteEntityRepository.Version,
-      Published = sqliteEntityRepository.Published,
-      PayloadJson = sqliteEntityRepository.PayloadJson ?? JsonDocument.Parse("{}"),
-      CreatedAt = sqliteEntityRepository.UpdatedAt
-    };
+    (
+      sqliteEntityRepository.Id,
+      sqliteEntityRepository.Version,
+      sqliteEntityRepository.Published,
+      sqliteEntityRepository.Disabled,
+      sqliteEntityRepository.PayloadJson ?? JsonDocument.Parse("{}"),
+      sqliteEntityRepository.CreatedAt,
+      sqliteEntityRepository.UpdatedAt
+    );
   }
 }

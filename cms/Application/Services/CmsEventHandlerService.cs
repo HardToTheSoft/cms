@@ -71,6 +71,8 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
 
       _logger.LogInformation("Processing {Count} grouped events", groupedEvents.Count());
 
+      bool hasErrors = false;
+
       int numberOfProcessedEvents = 0;
       int numberOfPDeletedEvents = 0;
       int numberOfCreatedEvents = 0;
@@ -106,7 +108,7 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
 
           var latestEvent = eventGroup.Where(e => (e.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase)
                 || e.Type.Equals(UNPUBLISH, StringComparison.OrdinalIgnoreCase))
-              && e.Version.HasValue)
+              && e.Version.HasValue && e.Version.Value > 0)
             .OrderByDescending(e => e.Version!.Value)
             .ThenByDescending(e => e.Timestamp)
             .FirstOrDefault();
@@ -133,13 +135,11 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
           {
             _logger.LogInformation("Entity not found for Id {Id}. Creating new entity.", id);
 
-            entity = new Entity
-            {
-              Id = id,
-              Version = latestEvent.Version!.Value,
-              Published = latestEvent.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase),
-              PayloadJson = latestEvent.PayloadJson
-            };
+            entity = new Entity(
+              id,
+              latestEvent.Version!.Value,
+              latestEvent.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase),
+              payloadJson: latestEvent.PayloadJson);
 
             await _entities.AddAsync(entity);
 
@@ -157,8 +157,10 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
               entity.Version,
               latestEvent.Version);
 
-            entity.PayloadJson = latestEvent.PayloadJson;
-            entity.Published = latestEvent.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase);
+            if (latestEvent.Type.Equals(PUBLISH, StringComparison.OrdinalIgnoreCase))
+              entity.Publish(latestEvent.Version!.Value, latestEvent.PayloadJson);
+            else
+              entity.Unpublish(latestEvent.Version!.Value, latestEvent.PayloadJson);
 
             await _entities.UpdateAsync(entity);
 
@@ -179,6 +181,8 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
         }
         catch (Exception ex)
         {
+          hasErrors = true;
+
           _logger.LogError(ex, "An error occurred while processing event for Id {Id}", id);
         }
       }
@@ -191,7 +195,8 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
         numberOfUpdatedEvents,
         numberOfIgnoredEvents);
 
-      _logger.LogInformation("SUCCESS");
+      if (!hasErrors)
+        _logger.LogInformation("SUCCESS");
     }
     catch (Exception ex)
     {

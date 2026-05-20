@@ -20,8 +20,10 @@ public static class EntityExtensions
       Id = entity.Id,
       Version = entity.Version,
       Published = entity.Published,
+      Disabled = entity.Disabled,
       PayloadJson = entity.PayloadJson ?? JsonDocument.Parse("{}"),
-      CreatedAt = entity.UpdatedAt
+      CreatedAt = entity.CreatedAt,
+      UpdatedAt = entity.UpdatedAt
     };
   }
 }
