@@ -62,7 +62,7 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
     {
       if (cmsEventModel.Payload is not List<EventModel> events)
       {
-        _logger.LogWarning("Payload is empty. Skip processing...");
+        _logger.LogError("Payload is empty. Skip processing...");
 
         return;
       }
@@ -95,13 +95,13 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
 
           if (eventGroup.Any(e => e.Type.Equals(DELETE, StringComparison.OrdinalIgnoreCase)))
           {
-            _logger.LogInformation("Delete event detected for Id {Id}. Executing delete flow.", id);
+            _logger.LogWarning("Delete event detected for Id {Id}. Executing delete flow.", id);
 
             await _entities.DeleteAsync(id);
 
             ++numberOfPDeletedEvents;
 
-            _logger.LogInformation("Delete completed for Id {Id}", id);
+            _logger.LogWarning("Delete completed for Id {Id}", id);
 
             continue;
           }
@@ -122,8 +122,8 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
             continue;
           }
 
-          _logger.LogInformation(
-            "Latest event selected for Id {Id}. Type: {Type}, Version: {Version}, Timestamp: {Timestamp}",
+          _logger.LogTrace(
+            "Event Id {Id}. Type: {Type}, Version: {Version}, Timestamp: {Timestamp}",
             latestEvent.Id,
             latestEvent.Type,
             latestEvent.Version,
@@ -145,7 +145,7 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
 
             ++numberOfCreatedEvents;
 
-            _logger.LogDebug("Entity created for Id {Id} with Version {Version}", id, entity.Version);
+            _logger.LogInformation("Entity created for Id {Id} with Version {Version}", id, entity.Version);
 
             continue;
           }
@@ -166,12 +166,12 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
 
             ++numberOfUpdatedEvents;
 
-            _logger.LogDebug("Entity updated for Id {Id}", id);
+            _logger.LogInformation("Entity updated for Id {Id}", id);
 
             continue;
           }
 
-          _logger.LogDebug(
+          _logger.LogInformation(
             "Ignoring event for Id {Id}. Current Version: {CurrentVersion}, Event Version: {EventVersion}",
             id,
             entity?.Version,

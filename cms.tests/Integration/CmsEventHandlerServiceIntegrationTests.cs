@@ -18,8 +18,6 @@ public class CmsEventHandlerServiceIntegrationTests
   #region Members
   private CustomWebApplicationFactory<Program> _webApplicationFactory;
 
-  private TestLogger<CmsEventHandlerService> _logger;
-
   private CmsEventHandlerService _cmsEventHandler;
   #endregion
 
@@ -34,8 +32,6 @@ public class CmsEventHandlerServiceIntegrationTests
   public void Setup()
   {
     _webApplicationFactory = new CustomWebApplicationFactory<Program>();
-
-    _logger = new TestLogger<CmsEventHandlerService>(TestContext);
   }
 
 
@@ -44,8 +40,12 @@ public class CmsEventHandlerServiceIntegrationTests
   {
     using var scope = _webApplicationFactory.Services.CreateScope();
 
+    bool success = false;
+
+    var logger = new TestLogger<CmsEventHandlerService>(TestContext);
+
     _cmsEventHandler = new CmsEventHandlerService(
-      _logger,
+      logger,
       scope.ServiceProvider.GetService<IEntityService>());
 
     await _cmsEventHandler.HandleEventAsync(new CmsEventModel
@@ -94,7 +94,63 @@ public class CmsEventHandlerServiceIntegrationTests
       }
     });
 
-    bool success = _logger.Messages.TryGetValue("SUCCESS", out _);
+    success = logger.Messages.TryGetValue("SUCCESS", out _);
+
+    Assert.IsTrue(success);
+
+    logger = new TestLogger<CmsEventHandlerService>(TestContext);
+
+    _cmsEventHandler = new CmsEventHandlerService(
+      logger,
+      scope.ServiceProvider.GetService<IEntityService>());
+
+    await _cmsEventHandler.HandleEventAsync(new CmsEventModel
+    {
+      Topic = CmsEventHandlerService.PROCESS_EVENTS_TOPIC,
+      Payload = new List<EventModel>
+      {
+        new()
+        {
+          Id = "X",
+          Type = "publish",
+          PayloadJson = JsonDocument.Parse("{\"example\": \"value\" }"),
+          Version = 2,
+          Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
+        },
+        new()
+        {
+          Id = "X",
+          Type = "delete",
+          Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
+        },
+        new()
+        {
+          Id = "Z",
+          Type = "unPublish",
+          PayloadJson = JsonDocument.Parse("{\"example\": \"value\" }"),
+          Version = 4,
+          Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
+        },
+        new()
+        {
+          Id = "Z",
+          Type = "unPublish",
+          PayloadJson = JsonDocument.Parse("{\"example\": \"value\" }"),
+          Version = 3,
+          Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
+        },
+        new()
+        {
+          Id = "Z",
+          Type = "unPublish",
+          PayloadJson = JsonDocument.Parse("{\"example\": \"value\" }"),
+          Version = 5,
+          Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
+        }
+      }
+    });
+
+    success = logger.Messages.TryGetValue("SUCCESS", out _);
 
     Assert.IsTrue(success);
   }
