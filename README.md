@@ -82,7 +82,7 @@ http://localhost:5050/swagger/index.html
 Run all tests in the cms.tests project:
 
 ```bash
-dotnet test cms.tests
+dotnet test cms.tests --logger "console;verbosity=detailed"
 ```
 
 ## Viewing the SQLite Database
