@@ -23,7 +23,7 @@ public record Entity : IEntity
     )
   {
     Id = string.IsNullOrWhiteSpace(id) ? throw new ArgumentException("Id cannot be empty.") : id.Trim().ToLower();
-    Version = GetVersion(version);
+    Version = ValidateVersion(version);
     Published = published;
     Disabled = disabled;
     PayloadJson = payloadJson;
@@ -51,14 +51,14 @@ public record Entity : IEntity
   #region Public methods
   public void Publish(int version, JsonDocument? payloadJson)
   {
-    Version = GetVersion(version);
+    SetVersion(version);
 
     PayloadJson = payloadJson;
   }
 
   public void Unpublish(int version, JsonDocument? payloadJson)
   {
-    Version = GetVersion(version);
+    SetVersion(version);
 
     PayloadJson = payloadJson;
   }
@@ -73,10 +73,16 @@ public record Entity : IEntity
 
 
   #region Private methods
-  [MethodImpl(MethodImplOptions.AggressiveInlining)]
-  private static int GetVersion(int version)
+  private void SetVersion(int version)
   {
-    return version < 1 ? throw new ArgumentException("First name cannot be empty.") : version;
+    version = ValidateVersion(version);
+
+    Version = version <= Version ? throw new ArgumentException("Invalid version.") : version;
   }
+
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  private static int ValidateVersion(int version)
+    => version < 1 ? throw new ArgumentException("Invalid version.") : version;
   #endregion
 }

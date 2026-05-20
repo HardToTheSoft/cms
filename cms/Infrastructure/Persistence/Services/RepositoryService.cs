@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 using Microsoft.EntityFrameworkCore;
 
 using Cms.Application.Interfaces;
@@ -34,7 +36,7 @@ public class RepositoryService<TEntity>
   public async Task<TEntity?> FindAsync(params object?[]? keyValues) => await _readDbSet.FindAsync(keyValues);
 
 
-  public TEntity? GetSingleOrDefault(Func<TEntity, bool> predicate) => _readDbSet.AsQueryable().SingleOrDefault(predicate);
+  public TEntity? GetSingleOrDefault(Expression<Func<TEntity, bool>> predicate) => _readDbSet.SingleOrDefault(predicate);
 
 
   public IQueryable<TEntity> GetAsQueryable(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query)
@@ -80,14 +82,30 @@ public class RepositoryService<TEntity>
 
     await _writeDbContext.SaveChangesAsync();
   }
-  
+
 
   public async Task UpdateAsync(TEntity? entity)
   {
     if (entity is null)
       return;
 
-    _writeDbSet.Update(entity);
+    var keyValues = _writeDbContext.Model
+      .FindEntityType(typeof(TEntity))!
+      .FindPrimaryKey()!
+      .Properties
+      .Select(p => p.PropertyInfo!.GetValue(entity))
+      .ToArray();
+
+    var trackedEntity = await _writeDbSet.FindAsync(keyValues);
+
+    if (trackedEntity is null)
+    {
+      _writeDbSet.Attach(entity);
+
+      _writeDbContext.Entry(entity).State = EntityState.Modified;
+    }
+    else
+      _writeDbContext.Entry(trackedEntity).CurrentValues.SetValues(entity);
 
     await _writeDbContext.SaveChangesAsync();
   }

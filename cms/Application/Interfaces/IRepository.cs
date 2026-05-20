@@ -1,3 +1,6 @@
+using System.Linq.Expressions;
+
+
 namespace Cms.Application.Interfaces;
 
 
@@ -5,7 +8,7 @@ public interface IRepository<TEntity> where TEntity : class, IRepositoryEntity, 
 {
   Task<TEntity?> FindAsync(params object?[]? keyValues);
 
-  TEntity? GetSingleOrDefault(Func<TEntity, bool> predicate);
+  TEntity? GetSingleOrDefault(Expression<Func<TEntity, bool>> predicate);
 
   IQueryable<TEntity> GetAsQueryable(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query);
 
@@ -18,7 +21,7 @@ public interface IRepository<TEntity> where TEntity : class, IRepositoryEntity, 
 
   Task UpdateAsync(TEntity? entity);
 
-  Task DeleteAsync(TEntity? entity);
+  Task DeleteAsync(TEntity entity);
 
   Task DeleteAsync(params object?[]? keyValues);
 }
