@@ -14,11 +14,11 @@ public interface IRepository<TEntity> where TEntity : class, IRepositoryEntity, 
     int? page = 1,
     int? limit = 25);
 
-  Task AddAsync(TEntity entity);
+  Task AddAsync(TEntity? entity);
 
-  Task UpdateAsync(TEntity entity);
+  Task UpdateAsync(TEntity? entity);
 
-  Task DeleteAsync(TEntity entity);
+  Task DeleteAsync(TEntity? entity);
 
   Task DeleteAsync(params object?[]? keyValues);
 }

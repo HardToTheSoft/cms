@@ -4,8 +4,6 @@ using Cms.Application.Dto;
 using Cms.Application.Extensions;
 using Cms.Application.Interfaces;
 
-using Cms.Infrastructure.Persistence.Services;
-
 
 namespace Cms.Application.Services;
 
@@ -15,20 +13,14 @@ public class EntityService : IEntityService
 	#region Members
 	private readonly IEntityRepository<Entity> _entities;
 
-	//private readonly ISearchEntityService<Entity> _search;
-
 	private readonly IUserContext _userContext;
 	#endregion
 
 
 	#region Constructor
-	public EntityService(
-		IEntityRepository<Entity> entities,
-		/*ISearchEntityService<Entity> search,*/
-		IUserContext userContext)
+	public EntityService(IEntityRepository<Entity> entities, IUserContext userContext)
 	{
 		_entities = entities;
-		//_search = search;
 		_userContext = userContext;
 	}
 	#endregion
@@ -66,16 +58,12 @@ public class EntityService : IEntityService
 		if (!_userContext.IsUser)
 			return null;
 
-		// var (entities, total) = await _search.QueryAsync(query =>
-		// 	{
-		// 		query = query.Where(e => !e.Disabled);
+		var entities = await _entities.QueryAsync(page, limit);
 
-		// 		return query.OrderByDescending(e => e.UpdatedAt);
-		// 	}, page, limit);
+		if (entities is null)
+			return null;
 
-		// return (entities?.Select(e => e.ToUserEntityDto()!) ?? [], total);
-
-		throw new NotImplementedException();
+		return (entities.Value.Entities.Select(e => e.ToUserEntityDto()!) ?? [], entities.Value.Total);
 	}
 
 
@@ -84,19 +72,12 @@ public class EntityService : IEntityService
 		if (!_userContext.IsAdmin)
 			return null;
 
-		var f = await _entities.QueryEntityAsync(page, limit);
+		var entities = await _entities.QueryAsync(page, limit);
 
-		//var (entities, total) = await _entities.QueryEntityAsync(page, limit);
+		if (entities is null)
+			return null;
 
-		return (f.Value.Entities.Select(e => e.ToAdminEntityDto()!) ?? [], f.Value.Total);
-
-		// var (entities, total) = await _search.QueryAsync(query => query.OrderByDescending(e => e.UpdatedAt),
-		// 	page, limit);
-
-		// return (entities.Select(e => e.ToAdminEntityDto()!) ?? [], total);
-
-
-		//throw new NotImplementedException();
+		return (entities.Value.Entities.Select(e => e.ToAdminEntityDto()!) ?? [], entities.Value.Total);
 	}
 
 

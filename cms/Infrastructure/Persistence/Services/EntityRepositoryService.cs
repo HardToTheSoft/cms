@@ -1,9 +1,9 @@
-using Cms.Domain;
-
 using Cms.Application.Interfaces;
 
 using Cms.Infrastructure.Persistence.Extensions;
 using Cms.Infrastructure.Persistence.Repositories;
+
+using Cms.Domain;
 
 
 namespace Cms.Infrastructure.Persistence.Services;
@@ -41,7 +41,7 @@ public class EntityRepositoryService : IEntityRepository<Entity>
 	}
 
 
-	public async Task<(IEnumerable<Entity> Entities, int Total)?> QueryEntityAsync(int? page = 1, int? limit = 25)
+	public async Task<(IEnumerable<Entity> Entities, int Total)?> QueryAsync(int? page = 1, int? limit = 25)
 	{
 		var (entities, total) = await _search.QueryAsync(query =>
 			{
@@ -51,8 +51,6 @@ public class EntityRepositoryService : IEntityRepository<Entity>
 			}, page, limit);
 
 		return (entities?.Select(e => e.ToEntity()!) ?? [], total);
-
-		//throw new NotImplementedException();
 	}
 
 
@@ -64,27 +62,5 @@ public class EntityRepositoryService : IEntityRepository<Entity>
 
 	public Task DeleteAsync(string id)
 		=> string.IsNullOrWhiteSpace(id) ? Task.CompletedTask : _entities.DeleteAsync(id.ToLower());
-
-
-	public async Task<Entity?> DisableAsync(string id)
-	{
-		if (string.IsNullOrWhiteSpace(id))
-			return null;
-
-		var entity = await _entities.FindAsync(id.ToLower());
-
-		if (entity == null)
-			return null;
-
-		if (entity.Disabled)
-			return entity.ToEntity();
-
-		entity.Disabled = true;
-		entity.UpdatedAt = DateTimeOffset.UtcNow;
-
-		await _entities.UpdateAsync(entity);
-
-		return entity.ToEntity();
-	}
 	#endregion
 }

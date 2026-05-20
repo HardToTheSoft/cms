@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace cms.Infrastructure.Persistence.Data.Migrations
 {
     [DbContext(typeof(SqliteDbContext))]
-    [Migration("20260520043756_InitialCreate")]
+    [Migration("20260520051724_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

@@ -71,7 +71,7 @@ public class RepositoryService<TEntity>
   }
 
 
-  public async Task AddAsync(TEntity entity)
+  public async Task AddAsync(TEntity? entity)
   {
     if (entity is null)
       return;
@@ -82,7 +82,7 @@ public class RepositoryService<TEntity>
   }
   
 
-  public async Task UpdateAsync(TEntity entity)
+  public async Task UpdateAsync(TEntity? entity)
   {
     if (entity is null)
       return;

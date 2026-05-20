@@ -1,13 +1,12 @@
 using System.Reflection;
 
-using Cms.Domain;
-
 using Cms.Application.Models;
 using Cms.Application.Interfaces;
 
 using Cms.Infrastructure.Attributes;
 using Cms.Infrastructure.EventHandler;
-using Cms.Infrastructure.Persistence.Repositories;
+
+using Cms.Domain;
 
 
 namespace Cms.Application.Services;
