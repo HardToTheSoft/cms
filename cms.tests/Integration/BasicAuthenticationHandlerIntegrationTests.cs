@@ -4,10 +4,11 @@ using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 
-using Microsoft.AspNetCore.Mvc.Testing;
-
 using Cms.Api.Authentication;
+
 using Cms.Application.Models;
+
+using Cms.Tests.Infrastructure;
 
 
 namespace Cms.Tests;
@@ -29,7 +30,7 @@ public class BasicAuthenticationHandlerIntegrationTests
     }
   });
 
-  private WebApplicationFactory<Program> _webApplicationFactory;
+  private CustomWebApplicationFactory<Program> _webApplicationFactory;
 
   private HttpClient _httpClient;
 
@@ -45,7 +46,7 @@ public class BasicAuthenticationHandlerIntegrationTests
   [TestInitialize]
   public void Setup()
   {
-    _webApplicationFactory = new WebApplicationFactory<Program>();
+    _webApplicationFactory = new CustomWebApplicationFactory<Program>();
 
     _httpClient = _webApplicationFactory.CreateClient();
   }

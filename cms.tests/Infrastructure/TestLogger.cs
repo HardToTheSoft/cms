@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 using Microsoft.Extensions.Logging;
 
 
@@ -70,9 +68,6 @@ public class TestLogger<T> : ILogger<T>
     Messages[key] = entry;
 
     _testContext.WriteLine($"[{logLevel}] {message}");
-
-    Debug.WriteLine($"[{logLevel}] {message}");
-    Console.WriteLine($"[{logLevel}] {message}");
   }
   #endregion
 }

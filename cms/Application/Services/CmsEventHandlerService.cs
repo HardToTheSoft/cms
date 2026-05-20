@@ -91,7 +91,7 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
         {
           ++numberOfProcessedEvents;
 
-          _logger.LogDebug("Processing group for Id {Id} with {Count} events", id, eventGroup.Count());
+          _logger.LogInformation("Processing group for Id {Id} with {Count} events", id, eventGroup.Count());
 
           if (eventGroup.Any(e => e.Type.Equals(DELETE, StringComparison.OrdinalIgnoreCase)))
           {
@@ -101,7 +101,7 @@ public class CmsEventHandlerService : EventHandlerServiceAbstract<CmsEventModel>
 
             ++numberOfPDeletedEvents;
 
-            _logger.LogDebug("Delete completed for Id {Id}", id);
+            _logger.LogInformation("Delete completed for Id {Id}", id);
 
             continue;
           }

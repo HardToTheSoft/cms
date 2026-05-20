@@ -1,12 +1,12 @@
 using System.Text.Json;
 
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
 using Cms.Application.Models;
-using Cms.Tests.Infrastructure;
 using Cms.Application.Services;
 using Cms.Application.Interfaces;
+
+using Cms.Tests.Infrastructure;
 
 
 namespace Cms.Tests;
@@ -16,7 +16,7 @@ namespace Cms.Tests;
 public class CmsEventHandlerServiceIntegrationTests
 {
   #region Members
-  private WebApplicationFactory<Program> _webApplicationFactory;
+  private CustomWebApplicationFactory<Program> _webApplicationFactory;
 
   private TestLogger<CmsEventHandlerService> _logger;
 
@@ -33,7 +33,7 @@ public class CmsEventHandlerServiceIntegrationTests
   [TestInitialize]
   public void Setup()
   {
-    _webApplicationFactory = new WebApplicationFactory<Program>();
+    _webApplicationFactory = new CustomWebApplicationFactory<Program>();
 
     _logger = new TestLogger<CmsEventHandlerService>(TestContext);
   }
@@ -67,13 +67,28 @@ public class CmsEventHandlerServiceIntegrationTests
           Type = "delete",
           Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
         },
-
         new()
         {
           Id = "Z",
           Type = "unPublish",
           PayloadJson = JsonDocument.Parse("{\"example\": \"value\" }"),
           Version = 4,
+          Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
+        },
+        new()
+        {
+          Id = "Z",
+          Type = "unPublish",
+          PayloadJson = JsonDocument.Parse("{\"example\": \"value\" }"),
+          Version = 3,
+          Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
+        },
+        new()
+        {
+          Id = "Z",
+          Type = "unPublish",
+          PayloadJson = JsonDocument.Parse("{\"example\": \"value\" }"),
+          Version = 5,
           Timestamp = DateTimeOffset.Parse("2024-01-01T00:00:00Z")
         }
       }
